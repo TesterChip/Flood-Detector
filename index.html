@@ -401,8 +401,18 @@
         min-height: 44px;
       }
     }
-    .a {
-      color: yellow;
+
+    /* Ensure footer links remain readable on the blue footer background */
+    footer a,
+    footer a:visited {
+      color: #ffffff;
+    }
+    footer a:hover,
+    footer a:focus {
+      color: #e6f7ff;
+      text-decoration: underline;
+      outline: none;
+      box-shadow: none;
     }
   </style>
 </head>
@@ -720,9 +730,9 @@ void loop() {
     </div>
   </div>
 </section>
-
 <footer>
   <p>Created by Prateek Priyadarshi | Solo-working coder & founder of <a href="https://testerchip.com/">TesterChip</a></p>
+  <p> For more such content follow <a href="https://testerchip.com/">TesterChip.com</a></p>
 </footer>
 
 <script>
@@ -824,6 +834,4 @@ void loop() {
   })();
 </script>
 </body>
-
 </html>
-
