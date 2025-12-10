@@ -1,17 +1,21 @@
 // Small demo script to animate the gauge and show alert styling.
 (function(){
-  const waterEl = document.getElementById('water');
+  const waterEl   = document.getElementById('water');
   const statusRow = document.getElementById('statusRow');
-  const statusText = document.getElementById('statusText');
+  const statusText= document.getElementById('statusText');
   const randomBtn = document.getElementById('randomBtn');
-  const alertBtn = document.getElementById('alertBtn');
+  const alertBtn  = document.getElementById('alertBtn');
+  const gauge     = document.querySelector('.gauge');
 
+  // unified setLevel function
   function setLevel(percent){
     percent = Math.max(0, Math.min(100, percent));
     waterEl.style.setProperty('--level', percent + '%');
     waterEl.textContent = percent + '%';
     updateStatus(percent);
+    applyGaugeClass(percent);
   }
+  window.setLevel = setLevel; // expose globally for other scripts
 
   function updateStatus(p){
     const threshold = 70; // demo threshold for alert
@@ -27,10 +31,16 @@
     }
   }
 
+  function applyGaugeClass(p){
+    gauge.classList.remove('alert','high');
+    if (p >= 75) gauge.classList.add('alert');
+    else if (p >= 50) gauge.classList.add('high');
+  }
+
   // demo animation loop
   let current = 30;
   setLevel(current);
-  let anim = setInterval(()=>{
+  setInterval(()=>{
     current += (Math.random()*14 - 7);
     current = Math.round(current);
     current = Math.max(0, Math.min(100, current));
@@ -44,26 +54,8 @@
   alertBtn.addEventListener('click', ()=>{
     setLevel(85);
   });
-})();
 
-// UI: color the gauge based on percentage and provide quick download feedback
-(function(){
-  const waterEl = document.getElementById('water');
-  const gauge = document.querySelector('.gauge');
-  function applyGaugeClass(p){
-    gauge.classList.remove('alert','high');
-    if (p >= 75) gauge.classList.add('alert');
-    else if (p >= 50) gauge.classList.add('high');
-  }
-
-  // enhance existing setLevel (if previously defined) or wrap current behavior
-  const originalSetLevel = window.setLevel;
-  window.setLevel = function(percent){
-    if (typeof originalSetLevel === 'function') originalSetLevel(percent);
-    applyGaugeClass(percent);
-  };
-
-  // fallback: if demo didn't expose setLevel, hook into interval update by observing text changes
+  // observe text changes as fallback
   const observer = new MutationObserver(muts=>{
     muts.forEach(m=>{
       if (m.target === waterEl) {
@@ -77,20 +69,9 @@
 
   // small click feedback for download buttons
   document.querySelectorAll('.download-grid a[download]').forEach(a=>{
-    a.addEventListener('click', e=>{
+    a.addEventListener('click', ()=>{
       a.style.opacity = 0.7;
       setTimeout(()=> a.style.opacity = 1, 400);
-    });
-  });
-})();
-
-// Download handler: simple, direct browser download (no fetch for local files)
-(function(){
-  document.querySelectorAll('.download-grid a[download]').forEach(a=>{
-    a.addEventListener('click', (e)=>{
-      // Let the browser handle the download naturally; don't prevent default
-      e.style.opacity = 0.7;
-      setTimeout(()=> e.style.opacity = 1, 400);
     });
   });
 })();
